@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Al Qadsiyah Medical Stock — مخزون القادسية الطبي</title>
+<style>
+:root{--red:#c8102e;--red-d:#a00d24;--ink:#1b1d22;--muted:#6b7280;--bg:#f4f5f7;--card:#fff;--border:#e3e5e9;--ok:#16a34a;--warn:#d97706;--grey:#eef0f3}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,'Segoe UI',Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button{font:inherit;cursor:pointer}
+input,select{font:inherit}
+.logo{height:44px;width:auto;object-fit:contain}
+.logoFallback{display:none;height:44px;width:44px;border-radius:10px;background:var(--red);color:#fff;font-weight:800;align-items:center;justify-content:center;font-size:16px}
+/* LOGIN */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(160deg,#fff 0%,var(--grey) 60%,#e6e8ec 100%)}
+.loginCard{width:100%;max-width:420px;background:var(--card);border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(16,24,40,.12);border:1px solid var(--border)}
+.loginTop{background:var(--red);padding:26px 24px;display:flex;align-items:center;gap:12px;color:#fff}
+.loginTop .logo,.loginTop .logoFallback{background:#fff;padding:4px;border-radius:10px}
+.loginTop .logoFallback{background:#fff;color:var(--red)}
+.loginTop h1{font-size:17px;margin:0;line-height:1.25}
+.loginTop span{font-size:12px;opacity:.9}
+.loginBody{padding:24px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.field input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:#fafbfc}
+.field input:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(200,16,46,.12)}
+.btn{width:100%;padding:13px;border:none;border-radius:10px;background:var(--red);color:#fff;font-weight:700;font-size:15px}
+.btn:hover{background:var(--red-d)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--border)}
+.langToggle{display:flex;justify-content:flex-end;gap:8px;margin-bottom:8px}
+.langToggle button{padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;font-size:13px}
+.langToggle button.active{background:var(--red);color:#fff;border-color:var(--red)}
+.err{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none}
+.hint{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.6}
+/* APP SHELL */
+#appScreen{display:none;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:10px 16px}
+.topbar h2{font-size:15px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hamburger{display:none;background:none;border:1px solid var(--border);border-radius:8px;padding:8px 10px}
+.userChip{display:flex;align-items:center;gap:8px;font-size:13px}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.shell{display:flex;min-height:calc(100vh - 61px)}
+.sidebar{width:250px;background:var(--card);border-inline-end:1px solid var(--border);padding:12px 10px;flex-shrink:0}
+.sidebar button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border:none;background:none;border-radius:9px;text-align:start;font-size:14px;color:var(--ink);margin-bottom:2px}
+.sidebar button:hover{background:var(--grey)}
+.sidebar button.active{background:var(--red);color:#fff;font-weight:600}
+.navIcon{width:18px;text-align:center}
+.content{flex:1;padding:20px;min-width:0}
+/* CARDS / DASH */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:22px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
+.stat .n{font-size:26px;font-weight:800;color:var(--red)}
+.stat .l{font-size:12px;color:var(--muted);margin-top:4px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px}
+.card h3{margin:0 0 8px;font-size:16px}
+.banner{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:18px}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--grey);color:var(--muted)}
+.pending{background:#fef9c3;color:#854d0e}
+.approved{background:#dcfce7;color:#166534}
+.rejected{background:#fee2e2;color:#991b1b}
+.phase{font-size:13px;color:var(--muted);line-height:1.7}
+/* RTL adjustments handled by dir attribute automatically */
+@media(max-width:800px){
+  .hamburger{display:block}
+  .sidebar{position:fixed;top:61px;bottom:0;inset-inline-start:0;z-index:30;transform:translateX(-100%);transition:transform .2s;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+  html[dir="rtl"] .sidebar{transform:translateX(100%)}
+  .sidebar.open{transform:translateX(0)!important}
+  .content{padding:14px}
+  .topbar h2{font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="loginCard">
+    <div class="loginTop">
+      <img src="logo.png" alt="Al Qadsiyah Medical Stock" class="logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="logoFallback">AQ</div>
+      <div>
+        <h1 id="brandEn">Al Qadsiyah Medical Stock</h1>
+        <span id="brandAr">مخزون القادسية الطبي</span>
+      </div>
+    </div>
+    <div class="loginBody">
+      <div class="langToggle">
+        <button id="langEnBtn" class="active" onclick="setLang('en')">EN</button>
+        <button id="langArBtn" onclick="setLang('ar')">عربي</button>
+      </div>
+      <div class="err" id="loginErr"></div>
+      <div class="field">
+        <label data-i18n="username">Username</label>
+        <input id="loginUser" autocomplete="username" placeholder="Alqadsiah">
+      </div>
+      <div class="field">
+        <label data-i18n="password">Password</label>
+        <input id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••">
+      </div>
+      <button class="btn" onclick="doLogin()" data-i18n="signIn">Sign In</button>
+      <div class="hint" data-i18n="loginHint">Use the account issued to you by the administrator. You will be asked to change your temporary password on first login.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD -->
+<div id="changePwScreen" style="display:none;min-height:100vh;align-items:center;justify-content:center;padding:20px">
+  <div class="loginCard">
+    <div class="loginTop"><div style="font-size:15px;font-weight:700" data-i18n="changePwTitle">Change Your Password</div></div>
+    <div class="loginBody">
+      <div class="err" id="pwErr"></div>
+      <div class="field"><label data-i18n="newPassword">New Password</label><input id="newPw" type="password"></div>
+      <div class="field"><label data-i18n="confirmPassword">Confirm Password</label><input id="newPw2" type="password"></div>
+      <button class="btn" onclick="saveNewPassword()" data-i18n="save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appScreen">
+  <div class="topbar">
+    <button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+    <img src="logo.png" alt="Logo" class="logo" style="height:34px" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="logoFallback" style="height:34px;width:34px;font-size:12px">AQ</div>
+    <h2 id="appTitle">Al Qadsiyah Medical Stock</h2>
+    <div class="langToggle" style="margin:0">
+      <button id="langEnBtn2" class="active" onclick="setLang('en')">EN</button>
+      <button id="langArBtn2" onclick="setLang('ar')">عربي</button>
+    </div>
+    <div class="userChip"><div class="avatar" id="userAvatar">A</div><span id="userName">—</span></div>
+    <button class="btn ghost" style="width:auto;padding:8px 14px" onclick="logout()" data-i18n="logout">Logout</button>
+  </div>
+  <div class="shell">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content" id="content"></main>
+  </div>
+</div>
+
+<script>
+/* ================= DB LAYER ================= */
+const DB_KEY='aqms_db_v1';
+const ROLES={ADMIN:'admin',SUP:'supervisor',WH:'warehouse',EMP:'employee'};
+
+function defaultDB(){
+  const mk=(u,p,role,name,dept,eid)=>({username:u,password:p,role,fullName:name,department:dept,employeeId:eid,firstLogin:true,active:true,lang:'en'});
+  const users=[
+    mk('Alqadsiah','0504767892',ROLES.ADMIN,'Main Administrator','Administration','ADM-001'),
+    mk('Supervisor','Supervisor',ROLES.SUP,'Supervisor','Administration','SUP-001'),
+    mk('Warehouse','Warehouse',ROLES.WH,'Warehouse Worker','Warehouse','WH-001')
+  ];
+  ['0504767892','0545333722','0509693274','0560777400','0599691475','0546817665','0533354966','0565229294']
+    .forEach((ph,i)=>users.push(mk(ph,ph,ROLES.EMP,'Employee '+(i+1),'General','EMP-'+String(i+1).padStart(3,'0'))));
+  return {users,products:[],stockIn:[],stockOut:[],requests:[],audit:[],counters:{request:0}};
+}
+function loadDB(){try{const r=localStorage.getItem(DB_KEY);if(r)return JSON.parse(r);}catch(e){}const d=defaultDB();localStorage.setItem(DB_KEY,JSON.stringify(d));return d;}
+function saveDB(){localStorage.setItem(DB_KEY,JSON.stringify(DB));}
+let DB=loadDB();
+let currentUser=null;
+let lang=localStorage.getItem('aqms_lang')||'en';
+
+function audit(action,detail){DB.audit.push({at:new Date().toISOString(),by:currentUser?currentUser.username:'system',action,detail});saveDB();}
+
+/* ================= I18N ================= */
+const I18N={
+en:{username:'Username',password:'Password',signIn:'Sign In',logout:'Logout',dashboard:'Dashboard',products:'Products',inventory:'Inventory',stockin:'Stock IN',stockout:'Stock OUT',requests:'Employee Requests',approvals:'Approvals',qrverify:'QR Verification',collection:'Warehouse Collection',employees:'Employees',reports:'Reports & Analytics',notifications:'Notifications',excel:'Excel Sync',settings:'System Settings',audit:'Audit Log',catalog:'Medical Supplies',myrequests:'My Requests',welcome:'Welcome',changePwTitle:'Change Your Password',newPassword:'New Password',confirmPassword:'Confirm Password',save:'Save',invalidLogin:'Invalid username or password.',pwMismatch:'Passwords do not match.',pwShort:'Password must be at least 6 characters.',pwChanged:'Password changed. Please sign in again.',loginHint:'Use the account issued to you by the administrator. You will be asked to change your temporary password on first login.',totalProducts:'Total Products',totalQty:'Total Inventory Qty',pendingReq:'Pending Requests',approvedWait:'Awaiting Collection',lowStock:'Low-Stock Items',expiring:'Expiring Soon',phase:'This module is scheduled for Phase 2. Navigation, role access, and layout are fully working.',admin:'Administrator',supervisor:'Supervisor',warehouse:'Warehouse Worker',employee:'Employee',accessDenied:'Access denied.'},
+ar:{username:'اسم المستخدم',password:'كلمة المرور',signIn:'تسجيل الدخول',logout:'خروج',dashboard:'لوحة التحكم',products:'المنتجات',inventory:'المخزون',stockin:'إدخال مخزون',stockout:'إخراج مخزون',requests:'طلبات الموظفين',approvals:'الموافقات',qrverify:'التحقق بالرمز',collection:'الاستلام من المستودع',employees:'الموظفون',reports:'التقارير والتحليلات',notifications:'الإشعارات',excel:'مزامنة إكسل',settings:'إعدادات النظام',audit:'سجل التدقيق',catalog:'المستلزمات الطبية',myrequests:'طلباتي',welcome:'مرحباً',changePwTitle:'تغيير كلمة المرور',newPassword:'كلمة المرور الجديدة',confirmPassword:'تأكيد كلمة المرور',save:'حفظ',invalidLogin:'اسم المستخدم أو كلمة المرور غير صحيحة.',pwMismatch:'كلمتا المرور غير متطابقتين.',pwShort:'كلمة المرور يجب أن تكون 6 أحرف على الأقل.',pwChanged:'تم تغيير كلمة المرور. يرجى تسجيل الدخول مجدداً.',loginHint:'استخدم الحساب الذي منحك إياه المسؤول. سيُطلب منك تغيير كلمة المرور المؤقتة عند أول دخول.',totalProducts:'إجمالي المنتجات',totalQty:'إجمالي كمية المخزون',pendingReq:'طلبات معلقة',approvedWait:'بانتظار الاستلام',lowStock:'منتجات منخفضة',expiring:'قاربت على الانتهاء',phase:'هذه الوحدة مجدولة للمرحلة الثانية. التنقل وصلاحيات الوصول والتخطيط تعمل بالكامل.',admin:'مسؤول',supervisor:'مشرف',warehouse:'موظف مستودع',employee:'موظف',accessDenied:'الوصول مرفوض.'}
+};
+function t(k){return (I18N[lang]&&I18N[lang][k])||I18N.en[k]||k;}
+
+/* ================= LANGUAGE ================= */
+function setLang(l){
+  lang=l;localStorage.setItem('aqms_lang',l);
+  document.documentElement.lang=l;
+  document.documentElement.dir=l==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
+  document.getElementById('langEnBtn').classList.toggle('active',l==='en');
+  document.getElementById('langArBtn').classList.toggle('active',l==='ar');
+  document.getElementById('langEnBtn2').classList.toggle('active',l==='en');
+  document.getElementById('langArBtn2').classList.toggle('active',l==='ar');
+  if(currentUser)renderApp();
+}
+
+/* ================= AUTH ================= */
+function showErr(id,msg){const e=document.getElementById(id);e.textContent=msg;e.style.display='block';setTimeout(()=>e.style.display='none',4000);}
+
+function doLogin(){
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  const user=DB.users.find(x=>x.username===u&&x.password===p&&x.active);
+  if(!user){showErr('loginErr',t('invalidLogin'));return;}
+  currentUser=user;
+  user.lang=lang;saveDB();
+  audit('LOGIN','Successful login');
+  document.getElementById('loginPass').value='';
+  if(user.firstLogin){document.getElementById('loginScreen').style.display='none';document.getElementById('changePwScreen').style.display='flex';}
+  else openApp();
+}
+
+function saveNewPassword(){
+  const p1=document.getElementById('newPw').value, p2=document.getElementById('newPw2').value;
+  if(p1.length<6){showErr('pwErr',t('pwShort'));return;}
+  if(p1!==p2){showErr('pwErr',t('pwMismatch'));return;}
+  currentUser.password=p1;currentUser.firstLogin=false;saveDB();
+  audit('PASSWORD_CHANGE','Temporary password replaced');
+  currentUser=null;
+  document.getElementById('changePwScreen').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('newPw').value='';document.getElementById('newPw2').value='';
+  showErr('loginErr',t('pwChanged'));
+}
+
+function logout(){if(currentUser)audit('LOGOUT','User logged out');currentUser=null;document.getElementById('appScreen').style.display='none';document.getElementById('loginScreen').style.display='flex';document.getElementById('sidebar').classList.remove('open');}
+
+/* ================= NAV ================= */
+const NAV={
+  admin:[['dashboard','📊'],['products','📦'],['inventory','🗃️'],['stockin','📥'],['stockout','📤'],['requests','📝'],['approvals','✅'],['qrverify','🔎'],['collection','🏷️'],['employees','👥'],['reports','📈'],['notifications','🔔'],['excel','📊'],['settings','⚙️'],['audit','🛡️']],
+  supervisor:[['dashboard','📊'],['products','📦'],['inventory','🗃️'],['requests','📝'],['reports','📈'],['notifications','🔔']],
+  warehouse:[['dashboard','📊'],['approvals','✅'],['qrverify','🔎'],['collection','🏷️'],['inventory','🗃️'],['notifications','🔔']],
+  employee:[['dashboard','📊'],['catalog','🩺'],['myrequests','📝'],['notifications','🔔']]
+};
+
+function openApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('changePwScreen').style.display='none';
+  document.getElementById('appScreen').style.display='block';
+  renderApp();
+}
+
+function renderApp(){
+  document.getElementById('userName').textContent=currentUser.fullName+' ('+t(currentUser.role)+')';
+  document.getElementById('userAvatar').textContent=currentUser.fullName.charAt(0).toUpperCase();
+  const nav=NAV[currentUser.role]||[];
+  const sb=document.getElementById('sidebar');
+  sb.innerHTML='';
+  nav.forEach(([view,icon])=>{
+    const b=document.createElement('button');
+    b.innerHTML='<span class="navIcon">'+icon+'</span>'+t(view);
+    b.onclick=()=>{sb.querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderView(view);sb.classList.remove('open');};
+    sb.appendChild(b);
+  });
+  if(nav.length){sb.firstChild.classList.add('active');renderView(nav[0][0]);}
+}
+
+/* ================= VIEWS ================= */
+function stats(){
+  const products=DB.products||[];
+  const pending=DB.requests.filter(r=>r.status==='pending').length;
+  const approved=DB.requests.filter(r=>r.status==='approved').length;
+  return{products:products.length,qty:products.reduce((s,p)=>s+(p.quantity||0),0),pending,approved};
+}
+
+function renderView(view){
+  const c=document.getElementById('content');
+  if(view==='dashboard'){
+    const s=stats();
+    c.innerHTML=`
+      <div class="banner">🔧 <b>Phase 1 prototype.</b> This app runs locally in your browser. Data is saved to this device only. Production database (Supabase) comes in Phase 2.</div>
+      <div class="grid">
+        <div class="stat"><div class="n">${s.products}</div><div class="l">${t('totalProducts')}</div></div>
+        <div class="stat"><div class="n">${s.qty}</div><div class="l">${t('totalQty')}</div></div>
+        <div class="stat"><div class="n">${s.pending}</div><div class="l">${t('pendingReq')}</div></div>
+        <div class="stat"><div class="n">${s.approved}</div><div class="l">${t('approvedWait')}</div></div>
+        <div class="stat"><div class="n">0</div><div class="l">${t('lowStock')}</div></div>
+        <div class="stat"><div class="n">0</div><div class="l">${t('expiring')}</div></div>
+      </div>
+      <div class="card"><h3>${t('welcome')}, ${currentUser.fullName}</h3>
+      <div class="phase">${t('role')||''} <span class="badge">${t(currentUser.role)}</span> · ID: ${currentUser.employeeId} · ${currentUser.department}</div></div>`;
+  }else if(view==='audit'){
+    c.innerHTML='<div class="card"><h3>'+t('audit')+'</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><thead><tr style="text-align:start;color:#6b7280"><th style="padding:6px;border-bottom:1px solid #e3e5e9">Time</th><th style="padding:6px;border-bottom:1px solid #e3e5e9">User</th><th style="padding:6px;border-bottom:1px solid #e3e5e9">Action</th><th style="padding:6px;border-bottom:1px solid #e3e5e9">Detail</th></tr></thead><tbody>'+
+      DB.audit.slice().reverse().map(a=>`<tr><td style="padding:6px;border-bottom:1px solid #f0f1f3">${new Date(a.at).toLocaleString()}</td><td style="padding:6px;border-bottom:1px solid #f0f1f3">${a.by}</td><td style="padding:6px;border-bottom:1px solid #f0f1f3">${a.action}</td><td style="padding:6px;border-bottom:1px solid #f0f1f3">${a.detail||''}</td></tr>`).join('')+
+      '</tbody></table></div>';
+  }else{
+    c.innerHTML='<div class="card"><h3>'+t(view)+'</h3><div class="phase">'+t('phase')+'</div></div>';
+  }
+}
+
+/* ================= BOOT ================= */
+setLang(lang);
+document.getElementById('loginUser').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginPass').focus();});
+document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+</script>
+</body>
+</html>
